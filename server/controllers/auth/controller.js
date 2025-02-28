@@ -1,9 +1,14 @@
 const { Router } = require('express')
-const { sendResponse, handleServerError } = require('../../utils/response')
+const {
+    sendResponse,
+    handleServerError,
+    created,
+} = require('../../utils/response')
 const router = Router()
-const { User } = require('../../db/models/user')
-const bcrypt = require('bcrypt')
-const constant = require('../../common/constant')
+const { User } = require('../../db/models/User')
+const { validateRequestBody } = require('../../utils/validation')
+const { registration } = require('./schema')
+const AuthService = require('./service')
 
 async function loginHandler(req, res, next) {
     try {
@@ -35,35 +40,27 @@ async function loginHandler(req, res, next) {
     }
 }
 
-async function signupHandler(req, res, next) {
-    const { email, password, first_name, last_name, phone_number } = req.body
-    if (!email || !password)
-        return res
-            .status(400)
-            .json({ error: 'email and password are required' })
+async function registerHandler(req, res, next) {
+    try {
+        const value = validateRequestBody(registration, req.body)
+        const data = await AuthService.register(value)
 
-    // const userById = await userService.getUserById(email)
-
-    // if (userById) {
-    //     return res.status(400).json({ message: 'User is already exist' })
-    // }
-
-    const userData = {
-        email: email,
-        password_hash: await bcrypt.hash(password, constant.auth.saltRounds),
-        first_name: first_name,
-        last_name: last_name,
-        phone_number: phone_number,
-        last_login: null,
-        status: true,
-        created_at: new Date(),
+        return created(res, data, 'User Created Successfully')
+    } catch (error) {
+        console.log('error : ', error)
+        if (error.hasOwnProperty('statusCode')) {
+            return res
+                .status(error.statusCode)
+                .json({ error: error.name, message: error.message })
+        } else {
+            return res.status(500).json({
+                error: 'Internal Server Error',
+            })
+        }
     }
-
-    await User.create(userData)
-    return res.status(201).json({ message: 'User Created Successfully' })
 }
 
 router.get('/login', loginHandler)
-router.post('/signup', signupHandler)
+router.post('/register', registerHandler)
 
 module.exports = router

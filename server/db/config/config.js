@@ -5,7 +5,7 @@ const config = {
     development: {
         username: process.env.DATABASE_USERNAME || 'root',
         password: process.env.DATABASE_PASSWORD || 'Techladd@123',
-        database: process.env.DATABASE_DATABASE || 'ecommerce',
+        database: process.env.DATABASE_DATABASE || 'sample',
         host: process.env.DATABASE_HOST || 'localhost',
         dialect: process.env.DATABASE_DIALECT || 'mysql',
     },
