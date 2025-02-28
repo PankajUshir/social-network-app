@@ -18,12 +18,21 @@ export function RegisterForm({
     ...props
 }: React.ComponentProps<'div'>) {
     const [registerData, setRegisterData] = useState({
-        full_name: '',
+        first_name: '',
+        last_name: '',
         email: '',
         password: '',
         confirm_password: '',
     })
     const router = useRouter()
+
+    const handleInputChange = (e: React.FormEvent) => {
+        const { name, value } = e.target
+        setRegisterData({
+            ...registerData,
+            [name]: value,
+        })
+    }
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault()
@@ -35,8 +44,8 @@ export function RegisterForm({
         router.push('/')
     }
     return (
-        <div className={cn('flex flex-col gap-6', className)} {...props}>
-            <Card>
+        <div className={cn('flex items-center flex-col gap-6', className)}>
+            <Card className="md:w-2xl">
                 <CardHeader>
                     <CardTitle>Register to your account</CardTitle>
                     <CardDescription>
@@ -44,20 +53,29 @@ export function RegisterForm({
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form>
-                        <div className="flex flex-col gap-6">
+                    <form onSubmit={handleSubmit}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="grid gap-3">
-                                <Label htmlFor="full_name">Full Name</Label>
+                                <Label htmlFor="first_name">First Name</Label>
                                 <Input
-                                    id="full_name"
+                                    id="first_name"
                                     type="text"
-                                    placeholder="Full Name"
-                                    onChange={(e) => {
-                                        setRegisterData({
-                                            ...registerData,
-                                            full_name: e.target.value,
-                                        })
-                                    }}
+                                    name="first_name"
+                                    value={registerData.first_name}
+                                    placeholder="First Name"
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div className="grid gap-3">
+                                <Label htmlFor="last_name">Last Name</Label>
+                                <Input
+                                    id="last_name"
+                                    type="text"
+                                    name="last_name"
+                                    value={registerData.last_name}
+                                    placeholder="Last Name"
+                                    onChange={handleInputChange}
                                     required
                                 />
                             </div>
@@ -66,13 +84,10 @@ export function RegisterForm({
                                 <Input
                                     id="email"
                                     type="email"
+                                    name="email"
+                                    value={registerData.email}
                                     placeholder="example@email.com"
-                                    onChange={(e) => {
-                                        setRegisterData({
-                                            ...registerData,
-                                            email: e.target.value,
-                                        })
-                                    }}
+                                    onChange={handleInputChange}
                                     required
                                 />
                             </div>
@@ -81,12 +96,9 @@ export function RegisterForm({
                                 <Input
                                     id="password"
                                     type="password"
-                                    onChange={(e) => {
-                                        setRegisterData({
-                                            ...registerData,
-                                            password: e.target.value,
-                                        })
-                                    }}
+                                    name="password"
+                                    value={registerData.password}
+                                    onChange={handleInputChange}
                                     required
                                 />
                             </div>
@@ -97,24 +109,17 @@ export function RegisterForm({
                                 <Input
                                     id="confirm_password"
                                     type="password"
-                                    onChange={(e) => {
-                                        setRegisterData({
-                                            ...registerData,
-                                            confirm_password: e.target.value,
-                                        })
-                                    }}
+                                    name="confirm_password"
+                                    value={registerData.confirm_password}
+                                    onChange={handleInputChange}
                                     required
                                 />
                             </div>
-                            <div className="flex flex-col gap-3">
-                                <Button
-                                    type="submit"
-                                    className="w-full"
-                                    onClick={handleSubmit}
-                                >
-                                    Register
-                                </Button>
-                            </div>
+                        </div>
+                        <div className="mt-4 flex justify-center ">
+                            <Button type="submit" className="w-3xs">
+                                Register
+                            </Button>
                         </div>
                         <div className="mt-4 text-center text-sm">
                             Already have an account?{' '}
